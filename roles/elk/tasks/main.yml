@@ -1,0 +1,69 @@
+---
+# tasks file for elk
+- name: Install packages for elk (Ubuntu)
+  apt:
+    name: 
+      - default-jre
+      - nginx
+    state: latest
+    update_cache: yes
+  become: yes
+  when: ansible_facts['distribution'] == 'Ubuntu'
+
+- name: Add elk apt key
+  apt_key:
+    url: "https://artifacts.elastic.co/GPG-KEY-elasticsearch"
+    state: present
+  become: yes
+  when: ansible_facts['distribution'] == 'Ubuntu'
+
+- name: Add elk repository
+  apt_repository:
+    repo: "deb https://artifacts.elastic.co/packages/7.x/apt stable main"
+    state: present
+    filename: "elasticsearch.list"
+  become: yes
+  when: ansible_facts['distribution'] == 'Ubuntu'
+
+- name: Install elasticsearch
+  apt:
+    name: elasticsearch
+    state: latest
+    update_cache: yes
+  become: yes
+  when: ansible_facts['distribution'] == 'Ubuntu'
+
+- name: Install packages for elk (CentOS)
+  yum:
+    name:
+      - java-11-openjdk
+      - nginx
+    state: latest
+    update_cache: yes
+  become: yes
+  when: ansible_facts['distribution'] == 'CentOS'
+
+- name: Add elk rpm key
+  rpm_key:
+    key: https://artifacts.elastic.co/GPG-KEY-elasticsearch
+    state: present
+  become: yes
+  when: ansible_facts['distribution'] == 'CentOS'
+
+- name: Add elk repository (CentOS)
+  yum_repository:
+    name: elasticsearch-7.x
+    description: Adds repository key
+    baseurl: https://artifacts.elastic.co/packages/7.x/yum
+    gpgcheck: True
+    gpgkey: https://artifacts.elastic.co/GPG-KEY-elasticsearch
+  become: yes
+  when: ansible_facts['distribution'] == 'CentOS'
+
+- name: Install elasticsearch (CentOS)
+  yum:
+    name: elasticsearch
+    state: latest
+    update_cache: yes
+  become: yes
+  when: ansible_facts['distribution'] == 'CentOS'
